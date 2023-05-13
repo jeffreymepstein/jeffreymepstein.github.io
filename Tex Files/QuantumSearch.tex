@@ -1,0 +1,211 @@
+\documentclass[]{article}
+
+\input{Qcircuit.tex}
+
+\usepackage[margin=1in]{geometry}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{amsthm}
+\usepackage{bbold}
+\usepackage{pgfplots}
+\newcommand{\tr}[0]{\text{tr}}
+\newcommand{\norm}[1]{\|#1\|}
+\newcommand{\alg}{\mathcal{A}}
+\newcommand{\braket}[2]{\left\langle#1\vert#2\right\rangle}
+\newcommand{\modulus}[1]{\left\vert#1\right\vert}
+\newcommand{\ketbra}[2]{\ket{#1}\bra{#2}}
+\newcommand{\set}[1]{\left\lbrace#1\right\rbrace}
+\newcommand{\brak}[1]{\left\langle#1\right\rangle}
+\newcommand{\com}[2]{\left[#1,#2\right]}
+\newcommand{\acom}[2]{\left\lbrace#1,#2\right\rbrace}
+\newcommand{\inner}[2]{\left\langle#1,#2\right\rangle}
+\newcommand{\bd}[1]{\textbf{#1}}
+
+\theoremstyle{plain}
+\newtheorem{theorem}{Theorem}
+\newtheorem{lemma}[theorem]{Lemma}
+
+\theoremstyle{definition}
+\newtheorem{defi}{Definition}
+
+\theoremstyle{remark}
+\newtheorem{nota}{Notation}
+
+\begin{document}
+\noindent\textbf{CS 294 Lecture 4 (9/23/16)}\\
+Professor: Umesh Vazirani\\
+Scribe: Jeffrey Epstein
+\subsection*{Quantum Techniques for Classical Functions}
+Suppose that we would like to know something about a ``classical" function $f:X\rightarrow Y$. We've seen that we can construct two natural unitary operators from $f$:
+\begin{equation}
+\begin{aligned}
+U_f:&\ket{x}\otimes\ket{y}\mapsto\ket{x}\otimes\ket{y\oplus f(x)}\\
+(-1)^f:&\ket{x}\mapsto(-1)^{f(x)}\ket{x}.
+\end{aligned}
+\end{equation}
+We can actually build the second operator from the first and some elementary gates by first applying $U_f$, then applying a phase gate to the second register ($Z$ if $Y=\set{0,1}$), and then applying $U_f$ again. An application of $U_f$ is called a query of an oracle, and in this context we're often interested in the minimum number of queries needed to answer some question about $f$.\\
+\\
+A naive hope is that we can learn a lot about $f$ with a single call to the oracle, say by feeding it the uniform superposition over inputs:
+\begin{equation}
+\modulus{X}^{-1/2}\sum_{x\in X}\ket{x}\otimes\ket{0}\overset{U_f}{\longmapsto}\modulus{X}^{-1/2}\sum_{x\in X}\ket{x}\otimes\ket{f(x)}.
+\end{equation}
+Now we've evaluated $f$ on all possible inputs, or taken all possible paths through the computation, or computed in parallel universes, or something! But to get any information out, we have to make a measurement, and the amount of information we can extract is limited\footnote{Holevo's theorem makes this precise.}. The simplest thing we could do is to measure both registers in the computational basis. Then we get the state $\ket{x}\ket{f(x)}$ with probability $1/\modulus{X}$. This is even worse than the classical strategy of feeding each value of $x$ to the oracle one at a time to learn the whole function, since we might end up with redundant outcomes. Any hope for a quantum speedup can't depend on this technique.\\
+\\
+Instead of this generally fruitless approach, we can identify two useful techniques:
+\begin{enumerate}
+\item Project onto a level set of $f$ by measuring the output register:
+\begin{equation}
+\sum_{x\in X}\alpha_x\ket{x}\otimes\ket{0}\overset{U_f}{\longmapsto}\sum_{x\in X}\alpha_x\ket{x}\otimes\ket{f(x)}\overset{\Pi_{a}}{\longmapsto}\set{\sum_{x\in X:f(x)=a}\modulus{\alpha_x}^2,\sum_{x\in X:f(x)=a}\alpha_x\ket{x}\otimes\ket{a}}
+\end{equation}
+where the notation $\set{p_i,\ket{\psi_i}}$ refers to the ensemble of preparing state $\ket{\psi_i}$ with probability $p_i$. The states are left unnormalized for compactness.
+
+\item Imprint $f$ on an input state via a phase factor:
+\begin{equation}
+\sum_{x\in X}\alpha_x\ket{x}\overset{(-1)^f}{\longmapsto}\sum_{x\in X}\alpha_x(-1)^{f(x)}\ket{x}
+\end{equation}
+where here for simplicity $\text{Im} f=\set{0,1}$.
+\end{enumerate}
+
+\subsection*{Lower Bound on Quantum Search Query Complexity}
+Can we use quantum mechanics to speed up the process of searching for a marked element in a set? One way to formalize this question is to consider a discrete set $X$ and the maps $f_a:X\mapsto\set{0,1}$ where $f_a(x)=\delta_a(x)$ for $a\in X$, i.e. the indicator functions on the one-element subsets of $X$ (we'll assume exactly one element is marked). If we're given a black box that can evaluate $f_a$ on inputs $x\in X$, the search problem becomes the problem of determining $a$, and we'd like a lower bound on the number of times we have to use the black box (query the oracle) to get a correct answer with high probability.\\
+\\
+Classically, each call to the oracle takes an input $x$ and gives us $f(x)$, so all we can do is repeatedly ask whether the statement $a=a'$ is true for different values of the guess $a'\in X$. We might get lucky and get $f(a')=1$, i.e. $a'=a$ the first time. But we might get unlucky and run through all $\modulus{X}$ possible inputs before hitting on the right answer. Therefore $\mathcal{O}(\modulus{X})$ is a lower bound for the number of calls to the oracle we have to make (in the worst case). Another way to see this is to note that the random variable encoding the value of $a$ has Shannon entropy $\log\modulus{X}$ (assuming $a$ is drawn uniformly at random) and the random variable $f_a(x)$ has entropy 
+\begin{equation}
+\begin{aligned}
+H&=\frac{1}{\modulus{X}}\log\modulus{X}+\frac{\modulus{X}-1}{\modulus{X}}\log\frac{\modulus{X}}{\modulus{X}-1}.
+\end{aligned}
+\end{equation}
+For $\modulus{X}\gg 1$, this goes as $\log\modulus{X}/\modulus{X}$, indicating that we need at least $\mathcal{O}(\modulus{X})$ calls to the oracle to get all of the information about $a$.\\
+\\
+In the quantum setting, the oracle should become a unitary operator. Let $\set{\psi_x}_{x\in X}$ be an orthonormal set of states spanning some Hilbert space $\mathcal{H}_1$, and let $\mathcal{H}_2$ be some other finite-dimensional Hilbert space. For some function $f:X\mapsto\set{0,1}$, define
+\begin{equation}
+U_f:\psi_x\otimes \phi\mapsto \psi_x\otimes W_{f(x)}\phi
+\end{equation}
+where $W_0$ and $W_1$ are unitary operators on $\mathcal{H}_2$. This definition extends by linearity to a unique unitary operator on $\mathcal{H}_1\otimes\mathcal{H}_2$, i.e. on the input register and any ancilla system we might want to include in the computation:
+\begin{equation}
+U_f=\sum_{x\in X}\Pi_x\otimes W_{f(x)}
+\end{equation}
+where $\Pi_x$ is the projector onto the subspace of $\mathcal{H}_1$ spanned by $\psi_x$. If we let $\mathcal{H}_2=\mathbb{C}^2$, $W_0=\mathbb{1}$, and $W_1=X$, then we have
+\begin{equation}
+U_f:\psi_f\otimes\ket{0}\mapsto\psi_f\otimes\ket{f(x)}.
+\end{equation}
+Preparing the state $\psi_f\otimes\ket{0}$, applying $U_f$, and measuring the ancilla qubit is then equivalent to querying a classical oracle for $f$, so this is an appropriate generalization of the classical problem. Equivalently, we could see the classical problem as adding to the quantum problem the restriction that we're only allowed to apply $U_f$ to basis states $\psi_f$ as opposed to arbitrary superpositions.\\
+\\
+In this framework we can ask how many calls to a quantum oracle (applications of $U_f$) we need to determine $a$, given that we're promised $f=f_a$ for some $a\in X$ and can apply any unitary operation we like. The strategy of the proof of the lower bound will be to note that we want to be able to distinguish the output of the algorithm in the cases $f=f_a$ and $f=f_{b}$, given that $a\neq b$ and to try to upper bound the norm distance between these two states by some quantity depending on the number of calls to the oracle.
+
+\begin{theorem}
+Any quantum algorithm that can reliably distinguish $f_a$ from $f_b$ for any $a,b\in X$, $a\neq b$ must involve $\mathcal{O}(\modulus{X}^{1/2})$ queries.
+\end{theorem}
+
+\begin{proof}
+The output of an algorithm that uses $t$ calls to the oracle may be represented as
+\begin{equation}
+\psi_\text{out}=V_tU_fV_{t-1}U_f\ldots V_1U_f\psi
+\end{equation}
+where we're free to choose the input state $\psi$ and the unitary gates $V_i$. These choices specify the algorithm. We can bound the difference $\Delta_\text{out}$ between the output states of this algorithm in the cases $f=f_a$ and $f=f_b$ by imagining comparing the outputs of the algorithm using $U_{f_a}$ for all queries except the last, which uses $U_{f_b}$, then the outputs of the algorithm that calls $U_{f_a}$ for all but the last two and the algorithm that calls $U_{f_a}$ for all but the last, and so on. This is the ``hybrid argument" mentioned in lecture. Formally, it amounts to repeated application of the triangle inequality for norms. For compactness, I'll write $U_a=U_{f_a}$:
+\begin{equation}
+\begin{aligned}
+\norm{\Delta_\text{out}}&=\norm{V_tU_aV_{t-1}U_a\ldots V_1U_a\psi-V_tU_bV_{t-1}U_b\ldots V_1U_b\psi}\\
+\\
+&\leq \norm{V_tU_aV_{t-1}U_a\ldots V_2U_aV_1U_a\psi-V_tU_aV_{t-1}U_a\ldots V_2U_aV_1U_b\psi}\\
+&\hspace{10pt}+\norm{V_tU_aV_{t-1}U_a\ldots V_2U_aV_1U_b\psi-V_tU_aV_{t-1}U_a\ldots V_2U_bV_1U_b\psi}\\
+&\hspace{20pt}+\ldots\\
+&\hspace{30pt}+\norm{V_tU_aV_{t-1}U_b\ldots V_2U_bV_1U_b\psi-V_tU_bV_{t-1}U_b\ldots V_2U_bV_1U_b\psi}\\
+\\
+&=\norm{U_a\psi-U_b\psi}\\
+&\hspace{10pt}+\norm{U_aV_1U_b\psi-U_bV_1U_b\psi}\\
+&\hspace{20pt}+\ldots\\
+&\hspace{30pt}+\norm{U_aV_{t-1}U_b\ldots V_2U_bV_1U_b\psi-U_bV_{t-1}U_b\ldots V_2U_bV_1U_b\psi}\\
+\\
+&=\norm{U_a\psi^{(0)}-U_b\psi^{(0)}}+\norm{U_a\psi^{(1)}-U_b\psi^{(1)}}+\ldots+\norm{U_a\psi^{(t-1)}-U_b\psi^{(t-1)}}\\
+&=\sum_{i=0}^{t-1}\norm{U_a\psi^{(i)}-U_b\psi^{(i)}}.
+\end{aligned}
+\end{equation}
+The first inequality is the triangle inequality, the following equality is due to the unitary invariance of the norm, and the next is just the introduction of some notation. Now we can apply the Cauchy-Schwarz inequality to find:
+\begin{equation}
+\begin{aligned}
+\norm{\Delta_\text{out}}^2&=\left(\sum_{i=0}^{t-1}\norm{U_a\psi^{(i)}-U_b\psi^{(i)}}\right)^2\leq t\sum_{i=0}^{t-1}\norm{U_a\psi^{(i)}-U_b\psi^{(i)}}^2.
+\end{aligned}
+\end{equation}
+Now suppose that we draw $a,b\in X$ uniformly and independently at random. The expectation of the norm difference squared is then:
+\begin{equation}
+\begin{aligned}
+\mathbb{E}\left[\norm{\Delta_\text{out}}^2\right]&\leq\frac{t}{\modulus{X}^2}\sum_{a,b\in X}\sum_{i=0}^{t-1}\norm{U_a\psi^{(i)}-U_b\psi^{(i)}}^2\\
+&=\frac{t}{\modulus{X}^2}\sum_{i=0}^{t-1}\sum_{a,b\in X}\norm{\sum_{y\in X}\left(\Pi_y\otimes W_{\delta_a(y)}-\Pi_y\otimes W_{\delta_b(y)}\right)\psi^{(i)}}^2\\
+&=\frac{t}{\modulus{X}^2}\sum_{i=0}^{t-1}\sum_{a,b\in X}\norm{\Pi_a\otimes \left(W_1-W_0\right)\psi^{(i)}-\Pi_b\otimes \left(W_1-W_0\right)\psi^{(i)}}^2\\
+&\leq\frac{t}{\modulus{X}^2}\sum_{i=0}^{t-1}\sum_{a,b\in X}\left(\norm{\Pi_a\otimes \left(W_1-W_0\right)\psi^{(i)}}^2+\norm{\Pi_b\otimes \left(W_1-W_0\right)\psi^{(i)}}^2\right)\\
+&=\frac{t}{\modulus{X}^2}\sum_{i=0}^{t-1}\left(\sum_{b\in X}\norm{\sum_{a\in X}\Pi_a\otimes \left(W_1-W_0\right)\psi^{(i)}}^2+\sum_{a\in X}\norm{\sum_{b\in X}\Pi_b\otimes \left(W_1-W_0\right)\psi^{(i)}}^2\right)\\
+&=\frac{t}{\modulus{X}^2}\sum_{i=0}^{t-1}\left(\sum_{b\in X}\norm{\mathbb{1}\otimes \left(W_1-W_0\right)\psi^{(i)}}^2+\sum_{a\in X}\norm{\mathbb{1}\otimes \left(W_1-W_0\right)\psi^{(i)}}^2\right)\\
+&\leq\frac{t}{\modulus{X}^2}\sum_{i=0}^{t-1}\left(4\modulus{X}+4\modulus{X}\right)\\
+&=\frac{8t^2}{\modulus{X}}.
+\end{aligned}
+\end{equation}
+Here we've used the Pythagorean theorem to pull sums inside norms. The first inequality is due to the fact that the terms in the double sum with $a=b$ actually vanish. The triangle inequality and the unitary invariance of the norm give the second inequality. From this result we can conclude that there is some pair of elements $a,b\in X$ for which
+\begin{equation}
+\norm{\Delta_\text{out}}\leq \frac{2\sqrt{2}t}{\modulus{X}^{1/2}}.
+\end{equation}
+If $\psi_a$ and $\psi_b$ are the outputs of the algorithm given that $f=f_a$ and $f=f_b$, respectively, then
+\begin{equation}
+\begin{aligned}
+\norm{\Delta_\text{out}}&=\norm{\psi_a-\psi_b}=\brak{\psi_a-\psi_b,\psi_a-\psi_b}\geq 2-2\modulus{\brak{\psi_a,\psi_b}}.
+\end{aligned}
+\end{equation}
+Then there are some pair of choices $a,b\in X$ such that the fidelity between the two output states is lower bounded:
+\begin{equation}
+\modulus{\brak{\psi_a,\psi_b}}\geq 1-\frac{\sqrt{2}t}{\modulus{X}^{1/2}}.
+\end{equation}
+Therefore we need $t=\mathcal{O}(\modulus{X}^{1/2})$ for the fidelity to be close to zero, i.e., for the two output states to be distinguishable with high probability. In more operational terms, if you give me a family of algorithms with that uses fewer than $\mathcal{O}(\modulus{X}^{1/2})$ queries, then for large $\modulus{X}$, I can choose to mark an item $x\in X$ that you will, at least almost half of the time, fail to identify correctly.
+\end{proof}
+\noindent This quantum lower bound of $\mathcal{O}(\modulus{X}^{1/2})$ is better than the classical lower bound of $\mathcal{O}(\modulus{X}^{1/2})$. We'll see in a bit that there is in fact an algorithm that achieves the quantum lower bound, so quantum mechanics does offer some speedup. Usually, we think of $X=\set{0,1}^n$, so that $\modulus{X}=2^n$. Then in terms of $n$, we have $\mathcal{O}(2^{n/2})$ instead of $\mathcal{O}(2^n)$. In terms of $n$, both lower bounds are exponential, so the quantum speedup isn't quite the miracle we hoped.
+
+\subsection*{Elitzur-Vaidman Bomb Detector}
+The Elitzur-Vaidman bomb detection experiment imagines a scenario in which we need to determine whether or not a bomb is a dud. The catch - the working bombs have such sensitive triggers that any interaction with the bombs (i.e., any attempt to measure them) will set them off. Can we \textit{safely} conclude one way or the other?\\
+\\
+To answer this question, we'll have to make some kind of model of the situation. Let's say the bomb is a qubit (it could also be taken here just to be a classical bit) which is either in the state $\ket{0}$ (a dud) or the state $\ket{1}$ (a live bomb). To capture the notion of a measurement setting off a live bomb, we'll do the following: suppose that we take an ancilla qubit initialized in the state $\ket{0}$, perform a CNOT from the bomb to the ancilla, and then measure the ancilla. If we measure 0, then the bomb is a dud, and we're safe. If we measure 1, then the bomb was functional, and we consider that our lab has been blown up.\\
+\\
+Clearly this approach doesn't satisfy our desire for a \textit{safe} procedure, since any time we find that the bomb is live, we also set it off. But consider the following circuit:\\
+\[
+\Qcircuit @C=.5em @R=0em @!R {
+	\ket{0}& & & \gate{R_{\pi/2M}}&\qw& \qw & \ctrl{1} & \qw & \qw & \qw & \qw& & \cdots & & & \gate{R_{\pi/2M}}&\qw& \qw & \ctrl{1} & \qw & \qw & \qw & \qw &\meter\\
+	\ket{b}& & &\qw & \qw & \qw & \ctrl{1} &\qw & \qw & \qw & \qw & & \cdots& & &\qw & \qw & \qw & \ctrl{1} &\qw & \qw &\qw&\qw&\qw \\
+	& & & &\ket{0} & & \targ &\qw &\meter & & & & & & & &\ket{0} & & \targ &\qw &\meter
+}
+\]\\
+There are $M$ applications of the basic unit of rotation, CCNOT, and measurement, and $R_{\pi/2M}$ is a rotation by $\frac{\pi}{2M}$ in the $\ket{0}-\ket{1}$ plane, i.e. the unitary operator $\exp(i\pi X/2M)$, with $X=\ket{0}\bra{1}+\ket{1}\bra{0}$. Let's examine what happens in the two cases:\\
+\\
+Case 1: The bomb is a dud, and $b=0$. In this case, none of the CCNOT gates are performed, so the only action of the circuit is to perform a rotation by $\pi/2$ on the first qubit. Then we will always measure the first qubit to be in the state $\ket{1}$. Since the bit flip is never applied to the ancillae qubits, we measure all of them to be in the state $\ket{0}$, and no explosion occurs.\\
+\\
+Case 2: The bomb is live, and $b=1$. If any of the ancilla measurements yields $\ket{1}$, the bomb detonates, so we're only interested in the case in which all of these measurements yield $\ket{0}$. Since the CNOT (the second C in CCNOT is always on) decoheres the first qubit, we can think of it as being probabilistically flipped back and forth from $\ket{0}$ to $\ket{1}$ as each unit of the circuit is applied (from the point of view of the first qubit, the CNOT is a measurement). The probability of a bit flip is $\sin^2(\pi/2M)$. So the probability that no bit flip occurs, which is the same as the probability that no CNOT is ever applied, and thus that no ancilla measurement causes an explosion, is $\cos^{2M}(\pi/2M)$. This probability goes to 1 as $M\rightarrow\infty$ (it takes $M=123$ to achieve a probability of greater than 98\%). For large $M$, $\cos^{2M}(\pi/2M)\approx 1-\pi^2/4M$. Note that in this case, we also measure the first qubit to be in the state $\ket{0}$.\footnote{Turning this thought experiment on its head, we can think about trying to ``freeze" the first qubit in the state $\ket{0}$ even while successive rotations are applied. This analysis shows that a way to do this is by making measurements between each rotation, with the probability of successful freezing going to one as the measurements become more and more frequent. This is the quantum Zeno effect.}\\
+\\
+Since this protocol, with high probability ($1-\mathcal{O}(1/M)$), gives us a way to determine if the bomb is live or not (by checking the outcome of the measurement of the first qubit) without setting off an explosion, it is a safe bomb detection test of the kind we wanted. Whether this model captures the fundamental nature of the question is a question for another time. For a start, is conditioning on the state of the bomb something that can be done ``without interacting" with it? This thought experiment is often discussed in the context of quantum optics, and that may be a more compelling analogue from this point of view.
+
+\subsection*{Grover's Algorithm}
+Suppose we're given a black box/oracle of the type described above that evaluates a function $f:\set{0,1}^n\rightarrow\set{0,1}$, and promised that there is a unique $a\in\set{0,1}^n$ such that $f(a)=1$. Grover's algorithm for finding this value of $a$ is implemented by the following circuit:
+\\
+\[
+\Qcircuit @C=.5em @R=0em @!R {
+	\ket{0}^{\otimes n} & & & &\qw & \gate{H^{\otimes n}} &\qw & \qw&\gate{R_e}&\qw&\gate{R_u} &\qw &\qw & &\cdots & &  &\qw&\gate{R_e}&\qw&\gate{R_u} &\qw &\qw&\meter
+}\]
+\\
+where the gates $R_e$ and $R_u$ are the unitary operators defined by
+\begin{equation}
+\begin{aligned}
+R_e:&\ket{x}\mapsto (-1)^{\delta_a(x)}\ket{x}\\
+R_u:&\ket{k}_f\mapsto -(-1)^{\delta_0(k)}\ket{k}_f
+\end{aligned}
+\end{equation}
+where $\ket{x}$ are the computational basis elements (this is the basis we're measuring in) and $\ket{k}_f$ are the elements of the Fourier basis, i.e. $\ket{k}_f=H^{\otimes n}\ket{k}$. The block consisting of the two $R$ gates is repeated $\mathcal{O}\left(2^{n/2}\right)$ times. We've seen that $R_e$ can be implemented with two calls to the oracle.\\
+\\
+So why does this circuit do what is claimed? Consider the two-dimensional subspace of the $2^n$-dimensional Hilbert space spanned by $\ket{a}$ and $\ket{u}=H^{\otimes n}\ket{0}^{\otimes n}=\ket{+}^{\otimes n}=\ket{0}_k$. In this subspace, define
+\begin{equation}
+\ket{e}=\frac{(\mathbb{1}-\ket{a}\bra{a})\ket{u}}{\sqrt{\bra{u}(\mathbb{1}-\ket{a}\bra{a})\ket{u}}}
+\end{equation}
+so that $\ket{a}$ and $\ket{e}$ form an orthonormal basis. In this subspace, $R_e$ performs a reflection across the line spanned by $\ket{e}$, and $R_u$ performs a rotation across the line spanned by $\ket{u}$. Recall that the composition of two reflections is a rotation by twice the angle between the two axes of reflection. In this case, the angle is
+\begin{equation}
+\begin{aligned}
+\cos\theta&=\braket{u}{e}=\frac{\bra{u}(\mathbb{1}-\ket{a}\bra{a})\ket{u}}{\sqrt{\bra{u}(\mathbb{1}-\ket{a}\bra{a})\ket{u}}}=\sqrt{\bra{u}(\mathbb{1}-\ket{a}\bra{a})\ket{u}}=\sqrt{2^{-n}\sum_{x,y\in \set{0,1}^n}\bra{x}(\mathbb{1}-\ket{a}\bra{a})\ket{y}}\\
+&=\sqrt{2^{-n}\sum_{x,y,z\in \set{0,1}^n;z\neq a}\braket{x}{z}\braket{z}{y}}=\sqrt{2^{-n}\sum_{x\in\set{0,1}^n;x\neq a}1}=\sqrt{\frac{2^n-1}{2^n}}=\sqrt{1-2^{-n}}.
+\end{aligned}
+\end{equation}
+Rearranging, we find $\sin\theta=2^{-n/2}$. For $n\gg 1$, then $\theta\approx 2^{-n/2}$. Since for large $n$, we also have $\ket{u}\approx\ket{e}$, after $\mathcal{O}\left(2^{n/2}\right)$ applications of the two rotation gates, we will have rotated the input state $\ket{u}$ by an angle of $\mathcal{O}(1)$ towards $\ket{a}$. Then measuring in the computational basis, with high probability we get the outcome $a$. If we demand that we rotate by exactly $\pi/2$, so that we always measure outcome $a$, we'll have to be slightly more careful about keeping constant multiplicative factors around, and to be really careful we should remember that the unitary $R_e$ required \textit{two} calls to the oracle. But this doesn't change the scaling behavior, so is irrelevant from a complexity point of view.
+\end{document}

@@ -1,0 +1,104 @@
+\documentclass[]{article}
+\usepackage[margin=1in]{geometry}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{bbold}
+\usepackage{graphicx}
+\usepackage{color}
+\usepackage[hang,flushmargin]{footmisc} 
+
+\newcommand{\ket}[1]{\left\vert#1\right\rangle}
+\newcommand{\bra}[1]{\left\langle#1\right\vert}
+\newcommand{\braket}[2]{\left\langle#1\vert#2\right\rangle}
+\newcommand{\set}[1]{\left\lbrace#1\right\rbrace}
+\newcommand{\brak}[1]{\left\langle#1\right\rangle}
+\newcommand{\del}[1]{\partial_{#1}}
+\newcommand{\delmu}[0]{\del{\mu}}
+\newcommand{\delnu}[0]{\del{\nu}}
+\newcommand{\deli}[0]{\del{i}}
+\newcommand{\delj}[0]{\del{j}}
+\newcommand{\delk}[0]{\del{k}}
+\newcommand{\modulus}[1]{\left\vert#1\right\vert}
+\usepackage{amsthm}
+\theoremstyle{plain}
+\newtheorem{theorem}{Theorem}
+\newtheorem{lemma}[theorem]{Lemma}
+
+\theoremstyle{definition}
+\newtheorem{defi}{Definition}
+
+\theoremstyle{remark}
+\newtheorem{nota}{Notation}
+
+\title{Bell's Inequality}
+\author{Jeffrey Epstein}
+\begin{document}
+\maketitle
+\noindent These notes follow Bell's original papers on the subject.
+\begin{theorem}
+A local hidden variable theory (a hidden variable theory in which the setting of one measurement apparatus does not affect the outcome of another) must obey the inequality
+\begin{align}
+\modulus{(ab)_\sigma-(bc)_\sigma}\leq 1+(ac)_\sigma.
+\end{align}
+where $(ab)_\sigma=\brak{A(a)B(b)}_\sigma$ is the correlation between two $\pm 1$-valued random variables $A_\sigma(a)$ and $B_\sigma(b)$ that are perfectly anticorrelated when $a=b$. 
+\end{theorem}
+\begin{proof}
+Suppose we have a theory for describing a particular kind of thing. In our theory, these things are described by some object we'll call a preparation. I'm going to give you a bunch of things that are ``the same" in the sense that they are all described by the same preparation $\pi$. You can perform an operation on these things that results in two $\pm 1$-valued random variables $A_\pi(a)$ and $B_\pi(b)$, where $a$ and $b$ are settings you are free to choose. If you wanted, you could calculate the correlation between these variables:
+\begin{align}
+\brak{A(a)B(b)}_\pi.
+\end{align}
+We'd like to design a deterministic hidden-variable theory to reproduce the results of our theory. By this we mean that there is a ``hidden variable" $\lambda$ such that the values of the random variables are determined by $\lambda$. The preparations $\pi$ determine probability distributions $\rho_\pi(\lambda)$, so that we may write the correlations as follows:
+\begin{align}
+\brak{A(a)B(b)}_\pi=\int \rho_\pi(\lambda)A(a,\lambda)B(b,\lambda)d\lambda.
+\end{align}
+Suppose that the things I give you are described by a preparation $\sigma$ such that the random variables $A_\sigma(a)$ and $B_\sigma(b)$ are perfectly anti-correlated when $a=b$:
+\begin{align}
+\brak{A(a)B(a)}_\sigma=-1\longleftrightarrow A_\sigma(a)=-B_\sigma(a).
+\end{align}
+Then for arbitrary settings $a$, $b$, and $c$, we can do some calculations:
+\begin{align}
+\brak{A(b)B(a)}_\sigma-\brak{A(b)B(c)}_\sigma&=\int\rho_\sigma(\lambda)\left[A(b,\lambda)B(a,\lambda)-A(b,\lambda)B(c,\lambda)\right]d\lambda\\
+&=\int\rho_\sigma(\lambda)\left[A(b,\lambda)A(c,\lambda)-A(b,\lambda)A(a,\lambda)\right]d\lambda\\
+&=\int\rho_\sigma(\lambda)A(b,\lambda)A(a,\lambda)\left[A(a,\lambda)A(c,\lambda)-1\right]d\lambda.
+\end{align}
+Taking the absolute value and using the fact that the random variables take values $\pm 1$, we have
+\begin{align}
+\modulus{\brak{A(b)B(a)}_\sigma-\brak{A(b)B(c)}_\sigma}&\leq\int\rho_\sigma(\lambda)\left[1-A(a,\lambda)A(c,\lambda)\right]d\lambda\\
+&=1+\int\rho_\sigma(\lambda)A(a,\lambda)B(c,\lambda)d\lambda\\
+&=1+\brak{A(a)B(c)}_\sigma.
+\end{align}
+Noticing that $\brak{A(a)B(b)}_\pi=\brak{A(b)B(a)}_\pi$, we denote this quantity $(ab)_\pi$. Then the inequality reads
+\begin{align}
+\modulus{(ab)_\sigma-(bc)_\sigma}\leq 1+(ac)_\sigma.
+\end{align}
+\end{proof}
+
+\begin{theorem}
+The predictions of quantum mechanics cannot be explained by a local hidden variable theory.
+\end{theorem}
+	
+\begin{proof}
+Consider a system of two spins. Let the preparation $\sigma$ be the singlet state
+\begin{align}
+\ket{\sigma}=\frac{1}{\sqrt{2}}\left(\ket{0}\otimes\ket{1}-\ket{1}\otimes\ket{0}\right).
+\end{align}
+Let the random variables $A_\pi(a)$ and $B_\pi(b)$ be the outcomes of measurements of $(\sigma\cdot a)\otimes\mathbb{1}$ and $\mathbb{1}\otimes(\sigma\cdot b)$, respectively, for unit vectors $a$ and $b$. Then the correlations are
+\begin{align}
+(ab)_\sigma&=\brak{A(a)B(b)}_\sigma=\bra{\sigma}(\sigma\cdot a)\otimes(\sigma\cdot b)\ket{\sigma}=-a\cdot b.
+\end{align}
+Then for any $a$, $(aa)_\sigma=-1$, as in the statement of Bell's theorem. If there is to be an explanatory local hidden variable theory, then Bell's inequality must always hold:
+\begin{align}
+\modulus{-a\cdot b+b\cdot c}\leq 1-a\cdot c.
+\end{align}
+Consider the following measurements:
+\begin{align}
+a=(1,0,1)/\sqrt{2}\hspace{15pt}b=(0,0,1)\hspace{15pt}c=(1,0,0).
+\end{align}
+Then the inequality reads
+\begin{align}
+\modulus{-1/\sqrt{2}}\leq 1-1/\sqrt{2}\longrightarrow 1\leq \sqrt{2}-1\longrightarrow 2\leq\sqrt{2}.
+\end{align}
+This is a contradiction.
+\end{proof}
+
+\end{document}
