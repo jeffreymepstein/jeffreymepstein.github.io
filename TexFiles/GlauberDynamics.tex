@@ -1,0 +1,95 @@
+\documentclass[]{article}
+\usepackage[margin=1in]{geometry}
+\usepackage{amsmath}
+
+\begin{document}
+\section*{Glauber dynamics for the Ising chain}
+The goal of this post is to describe a model of a heat bath for the $d=1$ Ising model. In equilibrium statistical physics, a heat bath is nothing more than a parameter $\beta=1/T$ which tells us which of the Boltzmann distributions $P_\beta(s)\propto e^{-\beta H(s)}$ to study for a particular system with Hamiltonian $H$. This neither explains why such a state is reasonable to study, nor provides any information about how such a state is reached from a non-equilibrium state (vague invocations of entropy and ergodicity notwithstanding). I'll introduce the Glauber dynamics, which reproduce the Boltzmann distributions as unique steady states of a Markov chain (with a caveat at $T=0$). A conceptually interesting consequence of this framework is that it forces the realization that a heat bath is not a heat bath is not a heat bath. A black box that, given an Ising chain, implements the Glauber dynamics will cause equilibration of the Ising chain, but may not do the same to some other physical system. A model of a bath must be tailored to a specific physical system.\\
+\\
+\textbf{1. Ising chain and Glauber dynamics}
+\\
+Consider a classical spin chain with $N$ sites and periodic boundary conditions. In other words, consider $N$ variables $s_i$, $i=1,2,3,\ldots$ taking values $s_i=\pm 1$ with $s_{N+i}=s_i$. Define the Ising Hamiltonian\\
+\\
+$\begin{aligned}
+H=-J\sum_{i=1}^{N}s_is_{i+1}.
+\end{aligned}$\\
+\\
+At each time step, pick a site $j$ uniformly at random from $1$ to $N$. Let $\mathbf{s}$ be the current state of the system and let $\mathbf{s}_j'$ be the state of the system resulting from $\mathbf{s}$ via flipping the spin at site $j$, i.e. from the replacement $s_j\rightarrow -s_j$. Flip the spin at site $j$ with probability given by\\
+\\
+$\begin{aligned}
+w(\mathbf{s}\rightarrow\mathbf{s}_j')=\frac{\alpha}{2}\left[1-\frac{\gamma}{2}s_j(s_{j-1}+s_{j+1})\right]
+\end{aligned}$\\
+\\
+for some value of $\gamma$ yet to be specified. Note that this is indeed a Markov model. Incorporating the initial choice of $j$, the overall probability for the transition $\mathbf{s}\rightarrow\mathbf{s}_j'$ is just $w(\mathbf{s}\rightarrow\mathbf{s}_j')/N$.\\
+\\
+\textbf{2. The Boltzmann distribution is a steady state of Glauber dynamics}\\
+\\
+Detailed balance with respect to the Boltzmann distribution $P_\beta$ at inverse temperature $\beta$ is the condition\\
+\\
+$\begin{aligned}
+\frac{w(\mathbf{s}\rightarrow\mathbf{s}_j')}{w(\mathbf{s}_j'\rightarrow\mathbf{s})}=\frac{P_\beta(\mathbf{s}'_j)}{P_\beta(\mathbf{s})}=\frac{e^{-\beta H(\mathbf{s}_j')}}{e^{-\beta H(\mathbf{s})}}.
+\end{aligned}$\\
+\\
+If the parameters $w$ satisfy this condition, then $P_\beta$ is an eigenvector of the dynamics, and we'll have shown that the Glauber dynamics at least preserve equilibrium (later we'll see that, for $T>0$, they also drive a system to equilibrium). The right-hand side can be expanded:\\
+\\
+$\begin{aligned}
+e^{-\beta(H(\mathbf{s}_j')-H(\mathbf{s}))}&=\exp\left[\beta J\left(\sum_{i=1}^N(-1)^{\delta_{i,j}\delta_{i+1,j}}s_is_{i+1}-\sum_{i=1}^Ns_is_{i+1}\right)\right]=\exp\left[-2\beta J\left(s_{j-1}s_j+s_js_{j+1}\right)\right]\\
+&=e^{-2\beta Js_j(s_{j-1}+s_{j+1})}=\frac{1-\tanh \left[\beta Js_j(s_{j-1}+s_{j+1})\right]}{1-\tanh \left[\beta Js_j(s_{j-1}+s_{j+1})\right]}
+\end{aligned}$\\
+\\
+where the last equality is just $e^{-2x}=(1-\tanh x)/(1+\tanh x)$. Recognizing that $s_j(s_{j-1}+s_{j+1})/2$ takes values $0,\pm 1$ and that $\tanh 0=0$ and $\tanh (-x)=-\tanh x$, we get finally\\
+\\
+$\begin{aligned}
+\frac{w(\mathbf{s}\rightarrow\mathbf{s}_j')}{w(\mathbf{s}_j'\rightarrow\mathbf{s})}=\frac{1-\frac{1}{2}s_j(s_{j-1}+s_{j+1})\tanh 2\beta J}{1-\frac{1}{2}s_j(s_{j-1}+s_{j+1})\tanh2\beta J}
+\end{aligned}$\\
+\\
+as the detailed balance condition for $P_\beta$. Referring back to the proposed values of $w(\mathbf{s}\rightarrow\mathbf{s}_j')$ above, we see that this condition is satisfied for\\
+\\
+$\gamma = \tanh2\beta J$.\\
+\\
+For very high temperatures, $\beta\rightarrow 0$ and $\gamma\rightarrow 0$, so that the dynamics do not distinguish between spin flips that raise the energy of the system and those that lower it. For low temperatures, $\beta\rightarrow\infty$ and $\gamma\rightarrow 1$, so that the dynamics is much more likely to cause a spin flip that reduces the energy of the system than one that raises it. This formalizes the intuition that at low temperatures, energy considerations win, while at high temperatures, entropy dominates.\\
+\\
+\textbf{3. The Boltzmann distribution is the unique steady state for $T>0$}\\
+\\
+For $T>0$ (finite $\beta$), the Glauber dynamics on the state space of the Ising model forms an irreducible Markov chain with a finite state space (see e.g. Reference 3 below for a detailed overview of Markov chain machinery). Such Markov chains are positive recurrent (they visit each site infinitely many times, with finite mean time between visits) and therefore have unique stationary distributions, which we've already shown are the Boltzmann distributions. Moreover, since they are aperiodic, any distribution will converge to this stationary one under repeated application of the transition matrix. Physically, this is the formalization of the notion that any state will thermalize.\\
+\\
+For $T=0$, $\gamma=1$, and the Markov chain is \textit{not} irreducible. We are therefore not guaranteed that there is a unique stationary state, and in fact there are continuously many: any probabilistic combination of the two ground states of the Ising model is a stationary solution of the dynamics, since at $T=0$ there is no possibility of a transition out of a ground state.\\
+\\
+\textbf{4. Magnetization dynamics}\\
+\\
+Up to this point, we've really just used the Glauber dynamics as a framework to hold results from equilibrium statistical mechanics (the study of the Boltzmann distributions). Now we'll see that we can use them to model something new - the fundamentally non-equilibrium dynamics of relaxation to equilibrium.\\
+\\
+At time-step $n$, the probability that spin $j$ is flipped is\\
+\\
+$\frac{1}{N}\cdot\frac{\alpha}{2}\left[1-\frac{\gamma}{2}s_j(s_{j-1}+s_{j+1})\right]$\\
+\\
+so that \textit{given a fixed configuration $\mathbf{s}$ at time $n$}, the expected change in spin $j$ is\\
+\\
+$-\frac{\alpha}{N}\left[s_j-\frac{\gamma}{2}(s_{j-1}+s_{j+1})\right]$,\\
+\\
+where we've used the fact that $s_j^2=1$. Letting $\left\langle\cdot\right\rangle$ denote the expectation over all configurations and $E\left[\cdot\right]$ the expectation over the dynamics of a single time step, we have\\
+\\
+$\left\langle E\left[\Delta s_j\right]\right\rangle=-\frac{\alpha}{N}\left[\left\langle s_j\right\rangle-\frac{\gamma}{2}(\left\langle s_{j-1}\right\rangle+\left\langle s_{j+1}\right\rangle)\right].$\\
+\\
+Assume now that the system is prepared in a translationally invariant state, i.e. $\left\langle s_j\right\rangle=m$ for all $j$. The dynamics preserve this property, so we can write\\
+\\
+$\Delta m=-\frac{\alpha}{N}\left(1-\gamma\right)m.$\\
+\\
+For large times (many iterations of the Glauber dynamics) we can approximate this by\\
+\\
+$\frac{dm}{dt}=-\frac{\alpha}{N}(1-\gamma)m$,\\
+\\
+which yields\\
+\\
+$m(t)=m(0)e^{-\alpha(1-\gamma)t/N}m(0).$\\
+\\
+Therefore for $T>0$, $\gamma<1$ and the average magnetization decays exponentially in time (since we know the stationary solution is the Boltzmann distribution, the limit $m(\infty)=0$ checks out). For $T=0$, $\gamma=1$ and $m$ is conserved. This is possible due to the fact that there is a path through state space of non-increasing energy from any non-ground state to either ground state. For example, imagine preparing the system in an even distribution over the states with all spins down but one. The energy of such a state may be reduced by aligning the odd spin, but with some probability, the Glauber dynamics will move the two domain walls apart, eventually annihilating them after a full circle so that the system ends up in the spin up ground state.\\
+\\
+\textbf{References}\\
+\\
+http://physics.bu.edu/~redner/896/spin.pdf\\
+\\
+http://fig.if.usp.br/~oliveira/PRE\_67\_066101\_2003.pdf\\
+\\
+http://www.columbia.edu/~ks20/stochastic-I/stochastic-I-MCII.pdf
+\end{document}
