@@ -1,0 +1,232 @@
+
+\documentclass{article}
+
+\usepackage{url}
+\usepackage{parskip} 	
+
+%other packages for formatting
+\RequirePackage{color}
+\RequirePackage{graphicx}
+\usepackage[usenames,dvipsnames]{xcolor}
+\usepackage[margin=.8in]{geometry}
+
+%tabularx environment
+\usepackage{tabularx}
+
+%for lists within experience section
+\usepackage{enumitem}
+
+% centered version of 'X' col. type
+\newcolumntype{C}{>{\centering\arraybackslash}X} 
+
+%to prevent spillover of tabular into next pages
+\usepackage{supertabular}
+\usepackage{tabularx}
+\newlength{\fullcollw}
+\setlength{\fullcollw}{0.47\textwidth}
+
+%custom \section
+\usepackage{titlesec}				
+\usepackage{multicol}
+\usepackage{multirow}
+
+%CV Sections inspired by: 
+%http://stefano.italians.nl/archives/26
+\titleformat{\section}{\Large\scshape\raggedright}{}{0em}{}[\titlerule]
+\titlespacing{\section}{0pt}{10pt}{10pt}
+
+%for publications
+\usepackage[style=authoryear,sorting=ynt, maxbibnames=2]{biblatex}
+
+%Setup hyperref package, and colours for links
+\usepackage[unicode, draft=false]{hyperref}
+\definecolor{linkcolour}{rgb}{0,0.2,0.6}
+\hypersetup{colorlinks,breaklinks,urlcolor=linkcolour,linkcolor=linkcolour}
+\addbibresource{citations.bib}
+\setlength\bibitemsep{1em}
+
+%for social icons
+\usepackage{fontawesome5}
+
+% job listing environments
+\newenvironment{jobshort}[2]
+{
+	\begin{tabularx}{\linewidth}{@{}l X r@{}}
+		\textbf{#1} & \hfill &  #2 \\[3.75pt]
+	\end{tabularx}
+}
+{
+}
+
+\newenvironment{joblong}[2]
+{
+	\begin{tabularx}{\linewidth}{@{}l X r@{}}
+		\textbf{#1} & \hfill &  #2 \\[3.75pt]
+	\end{tabularx}
+	\begin{minipage}[t]{\linewidth}
+		\begin{itemize}[nosep,after=\strut, leftmargin=1em, itemsep=3pt,label=--]
+		}
+		{
+		\end{itemize}
+	\end{minipage}    
+}
+
+
+
+%----------------------------------------------------------------------------------------
+%	BEGIN DOCUMENT
+%----------------------------------------------------------------------------------------
+\begin{document}
+	
+	% non-numbered pages
+	\pagestyle{empty} 
+	
+	%----------------------------------------------------------------------------------------
+	%	TITLE
+	%----------------------------------------------------------------------------------------
+	
+	% \begin{tabularx}{\linewidth}{ @{}X X@{} }
+		% \huge{Your Name}\vspace{2pt} & \hfill \emoji{incoming-envelope} email@email.com \\
+		% \raisebox{-0.05\height}\faGithub\ username \ | \
+		% \raisebox{-0.00\height}\faLinkedin\ username \ | \ \raisebox{-0.05\height}\faGlobe \ mysite.com  & \hfill \emoji{calling} number
+		% \end{tabularx}
+	
+	\begin{tabularx}{\linewidth}{@{} C @{}}
+		\Huge{Jeffrey M Epstein} \\[7.5pt]
+		\href{https://jeffreymepstein.github.io/}{\raisebox{-0.05\height}\faGlobe \ jeffreymepstein.github.io} \ $|$ \ 
+		\href{mailto:jeffrey.m.epstein@gmail.com}{\raisebox{-0.05\height}\faEnvelope \ jeffrey.m.epstein@gmail.com} \ $|$ \  {\raisebox{-0.05\height}\faMapMarker  \ San Francisco, CA, USA}
+		
+	\end{tabularx}
+	
+	%----------------------------------------------------------------------------------------
+	% EXPERIENCE SECTIONS
+	%----------------------------------------------------------------------------------------
+	
+
+	\section{Work Experience}
+	
+	\begin{joblong}{Atom Computing, Senior Applications Engineer}{Aug 2021 - present}
+\item Decoder implementation and development of tools for logical circuit compilation and logical error rate analysis, suitable for comparing error correction schemes in preparation for small-scale experimental demonstrations
+\item Development of circuit simulation and statistical analysis tools for efficient gate characterization
+\item Led characterization/benchmarking component of DARPA US2QC program
+\item Development of novel state preparation algorithm for constrained optimization
+
+\item Built tools based on Q-CTRL software for optimization of pulse sequences on atomic platform,
+facilitating design of rapid gates robust against various sources of noise.
+
+\item Supervised company’s first theory intern, leading to her authorship on a scientific publication.
+\end{joblong}
+	
+	
+\begin{joblong}{National Institute of Standards and Technology, Postdoctoral Scholar}{Feb 2021 - June 2021}
+		\item Research on quantum information and thermodynamics, leading to publication.
+		\item NIST NRC Postdoctoral Research Associateship, 2021
+\end{joblong}
+	
+	
+\begin{joblong}{University of California, Berkeley, Graduate Student Researcher}{June 2015 - Dec 2020}
+\item Research and publication on problems in quantum information theory and nonequilibrium statistical mechanics.
+\item National Defense Science and Engineering Graduate (NDSEG) Fellowship, 2016 - 2021
+\end{joblong}
+
+\begin{joblong}{University of California, Berkeley, Graduate Student Instructor}{Sep 2014 - May 2015}
+\item Physics 112 (intro. to statistical and thermal physics), Physics 7b (intro. thermodynamics and electromagnetism for scientists and engineers). Taught sections, held regular
+office hours, and graded problem sets and exams.
+\end{joblong}
+
+\begin{joblong}{IBM Research, TJ Watson Research, Quantum Computing Intern}{Sep 2012 - June 2013}
+\item Studied robustness of randomized benchmarking (RB) under varying noise models, leading to a highly-cited publication used in the field as evidence for the validity of RB for benchmarking quantum processors subject to realistic physical noise.
+\end{joblong}
+	
+
+	\section{Education}
+	\begin{tabularx}{\linewidth}{@{}l X@{}}	
+		2014-2020 & University of California, Berkeley, PhD in physics\\
+		& Dissertation: Statistical Mechanics of Transport Processes in Active Matter\\
+		\\		
+		2013-2014 & Perimeter Institute for Theoretical Physics, MSc in Theoretical Physics (PSI)\\
+		\\
+		2008-2012 & Harvard College, AB magna cum laude with high honors in field\\
+		& Concentration in Chemistry and Physics\\
+		& Secondary field in Mathematics\\
+		& Language citation in Chinese
+	\end{tabularx}
+	
+	
+
+	
+	
+	
+	%----------------------------------------------------------------------------------------
+	%	PUBLICATIONS
+	%----------------------------------------------------------------------------------------
+	\section{Publications}
+	\begin{refsection}[citations.bib]
+		\nocite{*}
+		\printbibliography[heading=none]
+		\begin{enumerate}
+			
+			\item Repeated ancilla reuse for logical computation on a neutral atom quantum computer
+			JA Muniz, D Crow, H Kim, JM Kindem, WB Cairncross, A Ryou, ...
+			arXiv preprint arXiv:2506.09936
+			3	2025
+			\item High-Fidelity Universal Gates in the  Ground-State Nuclear-Spin Qubit
+			JA Muniz, M Stone, DT Stack, M Jaffe, JM Kindem, L Wadleigh, ...
+			PRX Quantum 6 (2), 020334
+			30	2025
+			\item Reasoning across spacelike surfaces in the Frauchiger-Renner thought experiment
+			\textbf{JM Epstein}
+			arXiv preprint arXiv:2503.00966
+			2025
+			
+			\item  Thermally driven quantum refrigerator autonomously resets superconducting qubit. M Aamir, P Suria, J Guzmán, C
+			Castillo-Moreno, \textbf{JME}, N Yunger Halpern, S Gasparinetti. Nature Physics 21 (2), 318-323
+			54	2025
+			
+			\item Fault-tolerant quantum computation with a neutral atom processor
+			BW Reichardt, A Paetznick, D Aasen, I Basov, JM Bello-Rivas, ...
+			arXiv preprint arXiv:2411.11822
+			6	2024
+			\item Logical computation demonstrated with a neutral atom quantum processor
+			BW Reichardt, A Paetznick, D Aasen, I Basov, JM Bello-Rivas, ...
+			arXiv e-prints, arXiv: 2411.11822
+			
+			
+		\item Note on simple and consistent gateset characterization including calibration and decoherence errors. \textbf{JME}.
+		arXiv:2402.17727 (2024)
+		\item Subspace Correction for Constraints. K Pawlak, \textbf{JME}, D Crow, S Gandhari, M Li, T Bohdanowicz, J King.
+		arXiv:2310.20191 (2024)
+		\item Iterative assembly of 171Yb atom arrays in cavity-enhanced optical lattices. M Norcia et al. arXiv:2401.16177 (2024)
+		\item  Mid-circuit qubit measurement and rearrangement in a 171Yb atomic array. M Norcia et al. arXiv:2305.19119 (2023)
+	
+		\item  Odd Diffusivity of Chiral Random Motion. C Hargus, \textbf{JME}, KK Mandadapu. Phys. Rev. Lett. 127, 178001 (2021).
+		\item  Quantum noise limits for a class of nonlinear amplifiers. \textbf{JME}, KB Whaley, J Combes. Phys. Rev. A 103 (5), 052415
+		(2021).
+		
+			\item Continuous quantum error correction for evolution under time-dependent Hamiltonians. J Atalaya, S Zhang, MY Niu,
+		A Babakhani, HCH Chan, \textbf{JME}, KB Whaley. Phys. Rev. A 103, 042406 2021
+		
+		\item  Time reversal symmetry breaking and odd viscosity in active fluids: Green-Kubo and NEMD results. C Hargus, K Klymko,
+		\textbf{JME}, KK Mandadapu. J. Chem. Phys. 152, 201102 (2020).
+		\item  Time reversal symmetry breaking in two-dimensional non-equilibrium viscous fluids. \textbf{JME}, KK Mandadapu.
+		Phys. Rev. E 101, 052614 (2020).
+		\item  Statistical Mechanics of Transport Processes in Active Fluids II: Equations of Hydrodynamics for Active Brownian Particles. \textbf{JME}, K Klymko, KK Mandadapu. J. Chem. Phys. 150, 164111 (2019).
+		\item  Postponing the orthogonality catastrophe: efficient state preparation for electronic structure simulations on quantum
+		devices. NM Tubman, C Mejuto-Zaera, \textbf{JME}, D Hait, DS Levine, W Huggins, Z Jiang, JR McClean, R Babbush, M HeadGordon, KB Whaley. arXiv:1809.05523 (2018).
+		\item  Quantum Speed Limits for Quantum Information Processing Tasks. \textbf{JME}, KB Whaley. Phys. Rev. A 95, 042314 (2017).
+		\item  Investigating the Limits of Randomized Benchmarking Protocols. \textbf{JME}, AW Cross, E Magesan, and JM Gambetta. Phys.
+		Rev. A 89, 062321 (2014)
+		\item  CD36 in the periphery and brain synergize in stroke injury in hyperlipidemia. E Kim, M Febbraio, Y Bao, AT Tolhurst,
+		\textbf{JME}, S Cho. Annals of Neurology. 71(6) (2012)
+	\end{enumerate}
+	\end{refsection}
+	
+	%----------------------------------------------------------------------------------------
+	%	SKILLS
+	%----------------------------------------------------------------------------------------
+
+	
+	\vfill
+	\center{\footnotesize Last updated: \today}
+	
+\end{document}
